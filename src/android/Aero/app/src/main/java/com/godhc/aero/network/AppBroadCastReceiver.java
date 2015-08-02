@@ -9,9 +9,6 @@ import com.godhc.aero.models.NetworkStateInfo;
 import com.godhc.aero.utils.Utils;
 import com.orhanobut.logger.Logger;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class AppBroadCastReceiver extends BroadcastReceiver {
     private static final String TAG = "AppBroadCastReceiver";
 

@@ -1,28 +1,30 @@
 package com.godhc.aero;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.godhc.aero.adapters.EventsAdapter;
 import com.godhc.aero.models.NetworkStateInfo;
-import com.godhc.aero.network.AppBroadCastReceiver;
 import com.godhc.aero.utils.Utils;
 import com.orhanobut.logger.Logger;
+import com.revmob.RevMob;
+import com.revmob.RevMobAdsListener;
+import com.revmob.ads.fullscreen.RevMobFullscreen;
 
 public class MainActivity extends AppCompatActivity implements EventsAdapter.RemoveEventClickListener {
     private final static String TAG = "MainActivity";
 
     RecyclerView eventsRecyclerView;
     EventsAdapter eventsAdapter;
+
+    private RevMob revmob;
+    private RevMobFullscreen fullscreen;
+    private boolean adIsLoaded = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +37,9 @@ public class MainActivity extends AppCompatActivity implements EventsAdapter.Rem
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
+
+        // Starting RevMob session
+        revmob = RevMob.startWithListener(this, revmobListener);
 
         if (savedInstanceState == null)
             processCurrentNetworkStateInfo();
@@ -101,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements EventsAdapter.Rem
                     "Offline",
                     "You are offline");
         }
+        showFullScreenAd();
     }
 
     @Override
@@ -138,4 +144,42 @@ public class MainActivity extends AppCompatActivity implements EventsAdapter.Rem
         }
     }
 
+    RevMobAdsListener revmobListener = new RevMobAdsListener() {
+
+        // Required
+        @Override
+        public void onRevMobSessionIsStarted() {
+            loadFullscreen(); // pre-load it without showing it
+            Logger
+                    .t(TAG)
+                    .i("RevMobSessionIsStarted");
+        }
+
+        public void onRevMobAdReceived() {
+            adIsLoaded = true; // Now you can show your fullscreen whenever you want
+            Logger
+                    .t(TAG)
+                    .i("Ad is loaded");
+        }
+    };
+
+    public void loadFullscreen() {
+        fullscreen = revmob.createFullscreen(this, revmobListener);
+    }
+
+    public void showFullScreenAd() {
+        if(adIsLoaded) {
+
+            fullscreen.show(); // call it wherever you want to show the fullscreen ad
+            Logger
+                    .t(TAG)
+                    .i("showing fullscreen ad");
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        showFullScreenAd();
+    }
 }

@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:name="com.orm.SugarApp"
@@ -21,6 +22,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!-- Declare RevMob activity -->
+        <activity android:name="com.revmob.ads.fullscreen.FullscreenActivity"
+            android:theme="@android:style/Theme.Translucent"
+            android:configChanges="keyboardHidden|orientation">
+        </activity>
+
+        <!-- RevMob Media ID -->
+        <meta-data android:name="com.revmob.app.id" android:value="55be5a0a96afab0c7a5c3fe8"/>
         <receiver android:name="com.godhc.aero.network.AppBroadCastReceiver">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
