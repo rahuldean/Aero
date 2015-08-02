@@ -1,9 +1,11 @@
 package com.godhc.aero.models;
 
+import com.orm.SugarRecord;
+
 import java.util.Calendar;
 import java.util.Date;
 
-public class NetworkStateInfo {
+public class NetworkStateInfo extends SugarRecord {
     boolean isActiveNetworkFound;
     boolean isConnected;
     String connectionType;

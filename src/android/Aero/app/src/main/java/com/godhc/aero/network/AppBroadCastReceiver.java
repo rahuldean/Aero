@@ -9,6 +9,9 @@ import com.godhc.aero.models.NetworkStateInfo;
 import com.godhc.aero.utils.Utils;
 import com.orhanobut.logger.Logger;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class AppBroadCastReceiver extends BroadcastReceiver {
     private static final String TAG = "AppBroadCastReceiver";
 
@@ -23,6 +26,11 @@ public class AppBroadCastReceiver extends BroadcastReceiver {
         int notificationId = 1;
         if (intent.getExtras() != null) {
             NetworkStateInfo currentNetworkStateInfo = utils.getCurrentNetworkState();
+            currentNetworkStateInfo.save();
+
+            Logger
+                    .t(TAG)
+                    .i("Saved network state info to db with id %d", currentNetworkStateInfo.getId());
 
             if (currentNetworkStateInfo.isActiveNetworkFound()) {
                 if (currentNetworkStateInfo.isConnected()) {
@@ -35,10 +43,9 @@ public class AppBroadCastReceiver extends BroadcastReceiver {
                             );
 
                     utils.showLocalNotification(notificationId, R.drawable.ic_notification_on_icon, "Online",
-                            String.format("Connected to %s via %s at %s",
+                            String.format("Connected to %s via %s",
                                     currentNetworkStateInfo.getNetworkConnectionName(),
-                                    currentNetworkStateInfo.getConnectionType(),
-                                    currentNetworkStateInfo.getEventRaisedDate()
+                                    currentNetworkStateInfo.getConnectionType()
                             ));
 
                 } else {
@@ -60,8 +67,7 @@ public class AppBroadCastReceiver extends BroadcastReceiver {
                         "Offline",
                         "You are offline");
             }
+
         }
     }
-
-
 }
