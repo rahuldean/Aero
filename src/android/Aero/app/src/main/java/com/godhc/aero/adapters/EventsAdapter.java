@@ -7,10 +7,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.godhc.aero.R;
 import com.godhc.aero.models.NetworkStateInfo;
+
+import org.ocpsoft.prettytime.PrettyTime;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,9 +46,14 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
                 holder.primaryText.setText(String.format("On %s", currentInfo.getConnectionType()));
                 holder.secondaryText.setText(String.format("Using %s network",
                         (currentInfo.getNetworkConnectionName() != null && !currentInfo.getNetworkConnectionName().isEmpty()) ? currentInfo.getNetworkConnectionName() : "-"));
+
+                holder.icon.setImageResource(R.drawable.ic_action_check_circle);
+                holder.icon.setColorFilter(context.getResources().getColor(R.color.colorPrimaryDark), android.graphics.PorterDuff.Mode.MULTIPLY);
             } else {
                 holder.primaryText.setText("Offline");
                 holder.secondaryText.setText("");
+                holder.icon.setImageResource(R.drawable.ic_action_error);
+                holder.icon.setColorFilter(context.getResources().getColor(R.color.colorAccent), android.graphics.PorterDuff.Mode.MULTIPLY);
             }
 
             holder.removeEvent.setOnClickListener(new View.OnClickListener() {
@@ -56,6 +64,8 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
                     }
                 }
             });
+
+            holder.eventRaisedOn.setText(new PrettyTime().format(currentInfo.getEventRaisedDate()));
         }
     }
 
@@ -68,12 +78,16 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
         TextView primaryText;
         TextView secondaryText;
         ImageButton removeEvent;
+        TextView eventRaisedOn;
+        ImageView icon;
 
         public ViewHolder(View itemView) {
             super(itemView);
             primaryText = (TextView) itemView.findViewById(R.id.activity_main_rv_events_row_tv_primaryText);
             secondaryText = (TextView) itemView.findViewById(R.id.activity_main_rv_events_row_tv_secondaryText);
             removeEvent = (ImageButton) itemView.findViewById(R.id.activity_main_rv_events_row_bt_removeEvent);
+            eventRaisedOn = (TextView) itemView.findViewById(R.id.activity_main_rv_events_row_tv_eventRaisedOn);
+            icon = (ImageView) itemView.findViewById(R.id.activity_main_rv_events_row_iv_icon);
         }
     }
 
@@ -83,7 +97,7 @@ public class EventsAdapter extends RecyclerView.Adapter<EventsAdapter.ViewHolder
     }
 
     public interface RemoveEventClickListener {
-        public void onRemoveEvent(long id);
+        void onRemoveEvent(long id);
     }
 
     public void setRemoveEventClickListener(RemoveEventClickListener removeEventClickListener) {
