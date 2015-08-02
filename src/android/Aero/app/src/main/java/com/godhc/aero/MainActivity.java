@@ -6,7 +6,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.godhc.aero.models.NetworkStateInfo;
+import com.godhc.aero.utils.Utils;
+import com.orhanobut.logger.Logger;
+
 public class MainActivity extends AppCompatActivity {
+    private final static String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,6 +23,48 @@ public class MainActivity extends AppCompatActivity {
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+
+        Utils utils = new Utils(this);
+        int notificationId = 1;
+
+        NetworkStateInfo currentNetworkStateInfo = utils.getCurrentNetworkState();
+
+        if (currentNetworkStateInfo.isActiveNetworkFound()) {
+            if (currentNetworkStateInfo.isConnected()) {
+
+                Logger
+                        .t(TAG)
+                        .i("Network connected to %s via %s at %s",
+                                currentNetworkStateInfo.getNetworkConnectionName(),
+                                currentNetworkStateInfo.getConnectionType(),
+                                currentNetworkStateInfo.getEventRaisedDate().toString()
+                        );
+
+                utils.showLocalNotification(notificationId, R.drawable.ic_notification_on_icon, "Online",
+                        String.format("Connected to %s via %s",
+                                currentNetworkStateInfo.getNetworkConnectionName(),
+                                currentNetworkStateInfo.getConnectionType()
+                        ));
+
+            } else {
+                Logger
+                        .t(TAG)
+                        .i("You are offline");
+
+                utils.showLocalNotification(notificationId, R.drawable.ic_notification_off_icon,
+                        "Offline",
+                        "You are offline");
+            }
+
+        } else {
+            Logger
+                    .t(TAG)
+                    .i("No active network found. Are you offline?");
+
+            utils.showLocalNotification(notificationId, R.drawable.ic_notification_off_icon,
+                    "Offline",
+                    "You are offline");
         }
     }
 
